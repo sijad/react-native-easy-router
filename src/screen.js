@@ -28,7 +28,7 @@ export const createInitialStack = (initialStack, screens) => {
 }
 
 export const screenStyle = {
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
     height: '100%',
     position: 'absolute',
     width: '100%'
