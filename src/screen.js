@@ -1,4 +1,12 @@
-import uuid from 'uuid/v4'
+// https://gist.github.com/gordonbrander/2230317
+function ID() {
+    return (
+        '_' +
+        Math.random()
+            .toString(36)
+            .substr(2, 9)
+    )
+}
 
 const defaultTransitionProps = {
     animation: 'right',
@@ -18,7 +26,7 @@ export const createScreen = screen => {
                   ? { ...defaultTransitionProps, ...screen.transitionProps }
                   : defaultTransitionProps
           }
-    return { id: uuid(), ...normilized }
+    return { id: ID(), ...normilized }
 }
 
 export const createInitialStack = (initialStack, screens) => {
