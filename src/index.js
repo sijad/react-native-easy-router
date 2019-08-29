@@ -2,7 +2,6 @@ import { BackHandler } from 'react-native'
 import { createInitialStack, createScreen, screenStyle } from './screen'
 import createRunTransition from './transition'
 import React from 'react'
-import SwipeRecognizer from './swipe'
 import { View } from 'react-native-animatable-promise'
 
 class NavigatorScreen extends React.Component {
@@ -206,11 +205,7 @@ class Navigator extends React.Component {
         )
     }
 
-    render = () => (
-        <SwipeRecognizer onSwipeBack={this.onBackPress}>
-            {this.state.stack.map(this.renderScreen)}
-        </SwipeRecognizer>
-    )
+    render = () => this.state.stack.map(this.renderScreen)
 }
 
 Navigator.defaultProps = {
