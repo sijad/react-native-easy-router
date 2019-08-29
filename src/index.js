@@ -55,10 +55,12 @@ class Navigator extends React.Component {
         })
     navigator = {
         pop: transitionProps => {
-            if (this.state.stack.length === 1) return
+            const { stack } = this.state
+
+            if (stack.length === 1) return
 
             return this.navigatorAction(async onFinish => {
-                const screen = this.state.stack[this.state.stack.length - 1]
+                const screen = stack[stack.length - 1]
                 await this.runTransition(
                     this.renderedScreens[screen.id],
                     !!transitionProps
@@ -66,21 +68,24 @@ class Navigator extends React.Component {
                         : screen.transitionProps,
                     true
                 )
-                await this.updateStack(this.state.stack.slice(0, -1))
+                await this.updateStack(stack.slice(0, -1))
                 onFinish()
             })
         },
         popTo: (screenId, transitionProps) => {
-            const screenIndex = this.state.stack.findIndex(({ id }) => id === screenId)
+            const { stack } = this.state
+
+            const screenIndex = stack.findIndex(({ id }) => id === screenId)
             if (screenIndex < 0) throw new Error(`No screen with id "${screenId}" found`)
-            if (screenIndex === this.state.stack.length - 1)
-                throw new Error(`Can't pop to current screen`)
+            if (screenIndex === stack.length - 1) throw new Error(`Can't pop to current screen`)
 
             return this.navigatorAction(async (onFinish, onFail) => {
-                if (this.state.stack.length === 1)
+                const { stack } = this.state
+
+                if (stack.length === 1)
                     return onFail("Can't pop if there's only one screen in the stack")
 
-                const screen = this.state.stack[this.state.stack.length - 1]
+                const screen = stack[stack.length - 1]
                 await this.runTransition(
                     this.renderedScreens[screen.id],
                     !!transitionProps
@@ -88,7 +93,7 @@ class Navigator extends React.Component {
                         : screen.transitionProps,
                     true
                 )
-                await this.updateStack(this.state.stack.slice(0, screenIndex + 1))
+                await this.updateStack(stack.slice(0, screenIndex + 1))
                 onFinish()
             })
         },
@@ -97,8 +102,10 @@ class Navigator extends React.Component {
                 throw new Error(`Screen ${screenName} doesn't exist`)
 
             return this.navigatorAction(async onFinish => {
+                const { stack } = this.state
+
                 const screen = createScreen({ screen: screenName, props, transitionProps })
-                await this.updateStack([...this.state.stack, screen])
+                await this.updateStack([...stack, screen])
                 await this.runTransition(
                     this.renderedScreens[screen.id],
                     screen.transitionProps,
@@ -112,8 +119,9 @@ class Navigator extends React.Component {
                 throw new Error(`Screen ${screenName} doesn't exist`)
 
             return this.navigatorAction(async onFinish => {
+                const { stack } = this.state
                 const screen = createScreen({ screen: screenName, props, transitionProps })
-                await this.updateStack([...this.state.stack, screen])
+                await this.updateStack([...stack, screen])
                 await this.runTransition(
                     this.renderedScreens[screen.id],
                     screen.transitionProps,
@@ -126,21 +134,27 @@ class Navigator extends React.Component {
         resetFrom: (screenId, screenName, props, transitionProps) => {
             if (!this.props.screens.hasOwnProperty(screenName))
                 throw new Error(`Screen ${screenName} doesn't exist`)
-            const screenIndex = this.state.stack.findIndex(({ id }) => id === screenId)
+            const { stack } = this.state
+            const screenIndex = stack.findIndex(({ id }) => id === screenId)
             if (screenIndex < 0) throw new Error(`No screen with id "${screenId}" found`)
 
             return this.navigatorAction(async onFinish => {
+                const { stack } = this.state
                 const screen = createScreen({ screen: screenName, props, transitionProps })
-                await this.updateStack([...this.state.stack, screen])
+                await this.updateStack([...stack, screen])
                 await this.runTransition(
                     this.renderedScreens[screen.id],
                     screen.transitionProps,
                     false
                 )
 
-                await this.updateStack([...this.state.stack.slice(0, screenIndex + 1), screen])
+                await this.updateStack([...stack.slice(0, screenIndex + 1), screen])
                 onFinish()
             })
+        },
+        stack() {
+            const { stack } = this.state
+            return [...stack]
         }
     }
 
@@ -182,12 +196,6 @@ class Navigator extends React.Component {
         const { screens } = this.props
         const { stack } = this.state
         const Screen = screens[stackItem.screen]
-        const screenDependentMethods = {
-            registerBackHandler: handler => (this.backHandlers[stackItem.id] = handler),
-            unregisterBackHandler: () => delete this.backHandlers[stackItem.id]
-        }
-        const screenNavigator = { ...this.navigator, ...screenDependentMethods }
-        Object.defineProperty(screenNavigator, 'stack', { get: () => this.state.stack })
 
         return (
             <AnimView
@@ -197,7 +205,7 @@ class Navigator extends React.Component {
                 ref={ref => (this.renderedScreens[stackItem.id] = ref)}
                 useNativeDriver={true}>
                 <NavigatorScreen
-                    navigator={screenNavigator}
+                    navigator={this.navigator}
                     passedProps={stackItem.props}
                     screen={Screen}
                 />
