@@ -34,10 +34,3 @@ export const createInitialStack = (initialStack, screens) => {
         ? [createScreen(initialStack)]
         : initialStack.map(createScreen)
 }
-
-export const screenStyle = {
-    backgroundColor: 'transparent',
-    height: '100%',
-    position: 'absolute',
-    width: '100%'
-}

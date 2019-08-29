@@ -1,5 +1,5 @@
-import { BackHandler } from 'react-native'
-import { createInitialStack, createScreen, screenStyle } from './screen'
+import { BackHandler, StyleSheet } from 'react-native'
+import { createInitialStack, createScreen } from './screen'
 import createRunTransition from './transition'
 import React from 'react'
 import { View } from 'react-native-animatable-promise'
@@ -193,7 +193,7 @@ class Navigator extends React.Component {
             <View
                 key={stackItem.id}
                 pointerEvents={index < stack.length - 1 ? 'none' : undefined}
-                style={[screenStyle, { opacity: index < stack.length - 2 ? 0 : 1 }]}
+                style={index < stack.length - 2 ? styles.hidenScreen : StyleSheet.absoluteFill}
                 ref={ref => (this.renderedScreens[stackItem.id] = ref)}
                 useNativeDriver={true}>
                 <NavigatorScreen
@@ -211,5 +211,12 @@ class Navigator extends React.Component {
 Navigator.defaultProps = {
     backHandler: navigator => navigator.pop()
 }
+
+const styles = StyleSheet.create({
+    hidenScreen: {
+        ...StyleSheet.absoluteFillObject,
+        opacity: 0
+    }
+})
 
 export default Navigator
