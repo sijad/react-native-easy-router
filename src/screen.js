@@ -1,3 +1,5 @@
+import { Easing } from 'react-native'
+
 // https://gist.github.com/gordonbrander/2230317
 function ID() {
     return (
@@ -11,7 +13,7 @@ function ID() {
 const defaultTransitionProps = {
     animation: 'right',
     duration: 250,
-    easing: 'ease-in-out'
+    easing: Easing.bezier(0.42, 0, 0.58, 1)
 }
 
 const isDefinedByString = screen => typeof screen === 'string'

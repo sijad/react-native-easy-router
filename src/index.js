@@ -2,7 +2,7 @@ import { BackHandler, StyleSheet } from 'react-native'
 import { createInitialStack, createScreen } from './screen'
 import createRunTransition from './transition'
 import React from 'react'
-import { View } from 'react-native-animatable-promise'
+import AnimView from './AnimView'
 
 class NavigatorScreen extends React.Component {
     shouldComponentUpdate = () => {
@@ -159,7 +159,7 @@ class Navigator extends React.Component {
         return stack.length > 1
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         this.androidBackHandler = BackHandler.addEventListener(
             'hardwareBackPress',
             this.onBackPress
@@ -190,7 +190,7 @@ class Navigator extends React.Component {
         Object.defineProperty(screenNavigator, 'stack', { get: () => this.state.stack })
 
         return (
-            <View
+            <AnimView
                 key={stackItem.id}
                 pointerEvents={index < stack.length - 1 ? 'none' : undefined}
                 style={index < stack.length - 2 ? styles.hidenScreen : StyleSheet.absoluteFill}
@@ -201,7 +201,7 @@ class Navigator extends React.Component {
                     passedProps={stackItem.props}
                     screen={Screen}
                 />
-            </View>
+            </AnimView>
         )
     }
 

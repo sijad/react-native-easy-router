@@ -2,9 +2,6 @@
     "name": "react-native-easy-router",
     "version": "3.0.2",
     "main": "src/index.js",
-    "dependencies": {
-        "react-native-animatable-promise": "^1.2.4"
-    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/sergeyshpadyrev/react-native-easy-router.git"
